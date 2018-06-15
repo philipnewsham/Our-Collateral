@@ -1,19 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Credits : MonoBehaviour {
-
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
-
-	public void MainMenu(){
-		Application.LoadLevel (0);
+public class Credits : MonoBehaviour
+{
+	public void MainMenu()
+    {
+		Application.LoadLevel(0);
 	}
 }

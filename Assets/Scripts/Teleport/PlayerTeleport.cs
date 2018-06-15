@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerTeleport : MonoBehaviour {
+public class PlayerTeleport : MonoBehaviour
+{
 	public Transform teleportLocation;
 	public float speed;
 
@@ -10,7 +11,8 @@ public class PlayerTeleport : MonoBehaviour {
 	private float teleZ;
 
 
-	void Start(){
+	void Start()
+    {
 		speed = 0.05f;
 		transform.position = new Vector3 (transform.position.x, transform.position.y, transform.position.z);
 		teleX = teleportLocation.position.x;
@@ -18,17 +20,18 @@ public class PlayerTeleport : MonoBehaviour {
 		teleZ = teleportLocation.position.z;
 	}
 
-	void Update(){
+	void Update()
+    {
 		transform.position = new Vector3 (transform.position.x, transform.position.y, transform.position.z + speed);
 	}
 
-	void OnTriggerEnter(Collider other){
-		if (other.tag == "Teleport") {
+	void OnTriggerEnter(Collider other)
+    {
+		if (other.tag == "Teleport")
+        {
 			speed *= -1;
 			transform.localRotation = new Quaternion (transform.localRotation.x, teleportLocation.localRotation.y,transform.localRotation.z, transform.localRotation.w);
 			transform.position = new Vector3 (teleX,teleY,teleZ);
-
 		}
 	}
-
-		}
+}

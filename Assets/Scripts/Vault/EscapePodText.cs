@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class EscapePodText : MonoBehaviour {
+public class EscapePodText : MonoBehaviour
+{
 	private GameObject vault;
 	private Colour colourScript;
 	private float redVault;
@@ -18,15 +19,16 @@ public class EscapePodText : MonoBehaviour {
 	public float lockPercentage;
 
 	public bool unlocked = false;
-	// Use this for initialization
-	void Start () {
 
+	void Start ()
+    {
 		GetComponent<TextMesh>().text = " ";
 		vault = GameObject.FindGameObjectWithTag ("Vault");
 		colourScript = vault.GetComponent<Colour> ();
 	}
 
-	void Update(){
+	void Update()
+    {
 		redVault = colourScript.redLight;
 		greenVault = colourScript.greenLight;
 		blueVault = colourScript.blueLight;
@@ -37,46 +39,43 @@ public class EscapePodText : MonoBehaviour {
 
 		//maths
 		redPercentage = (((redVault - redFloor)/redVault)*100);
-		if (redFloor > redVault) {
+		if (redFloor > redVault) 
 			redPercentage = 100 + redPercentage;
-		} else {
+		else 
 			redPercentage = 100 - redPercentage;
-		}
-
+		
 		greenPercentage = (((greenVault - greenFloor)/greenVault)*100); 
-		if (greenFloor > greenVault) {
+		if (greenFloor > greenVault) 
 		greenPercentage = 100 + greenPercentage;
-	} else {
+	    else 
 		greenPercentage = 100 - greenPercentage;
-	}
 
 		bluePercentage = (((blueVault - blueFloor)/blueVault)*100); 
-		if (blueFloor > blueVault) {
+		if (blueFloor > blueVault) 
 			bluePercentage = 100 + bluePercentage;
-		} else {
+		else
 			bluePercentage = 100 - bluePercentage;
-		}
+		
 		lockPercentage = Mathf.RoundToInt((redPercentage + greenPercentage + bluePercentage)/3);
 
-		if (lockPercentage == 100) {
+		if (lockPercentage == 100) 
 			unlocked = true;
-		}
-
 	}
 	
-	void OnTriggerStay(Collider other){
-		if (other.gameObject.tag == "Player") {
-			if (unlocked == false) {
+	void OnTriggerStay(Collider other)
+    {
+		if (other.gameObject.tag == "Player")
+        {
+			if (unlocked == false)
 				GetComponent<TextMesh> ().text = ("Escape \n Pod \n Unlock: " + lockPercentage + "%");
-			} else {
+            else
 				GetComponent<TextMesh> ().text = " ";
-			}
 		}
 	}
 	
-	void OnTriggerExit(Collider other){
-		if (other.gameObject.tag == "Player") {
+	void OnTriggerExit(Collider other)
+    {
+		if (other.gameObject.tag == "Player")
 			GetComponent<TextMesh> ().text = " ";
-		}
 	}
 }
