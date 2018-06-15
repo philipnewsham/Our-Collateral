@@ -26,7 +26,7 @@ public class Wayfinder_Original_01 : MonoBehaviour
 	private int randNo;
 	private ParticleSystem ptcl;
 
-	void Start()
+	void Awake()
     {
 		lockScript = lockGameObject.GetComponent<LockedHand> ();
 		unlocked = lockScript.unlocked;
