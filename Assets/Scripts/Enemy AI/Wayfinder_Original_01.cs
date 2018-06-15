@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Wayfinder_Original_01 : MonoBehaviour {
+public class Wayfinder_Original_01 : MonoBehaviour
+{
 	public GameObject lockGameObject;
 	LockedHand lockScript;
 	public GameObject playerChecker;
+    private Rigidbody rigidbody;
 	public bool unlocked;
 
 	public Transform[] wayPoints;
@@ -24,111 +26,93 @@ public class Wayfinder_Original_01 : MonoBehaviour {
 	private int randNo;
 	private ParticleSystem ptcl;
 
-	void Start(){
+	void Start()
+    {
 		lockScript = lockGameObject.GetComponent<LockedHand> ();
 		unlocked = lockScript.unlocked;
-
+        rigidbody = GetComponent<Rigidbody>();
 		ptcl = GetComponent<ParticleSystem> ();
 		GetComponent<SphereCollider> ().isTrigger = true;
 	}
-	void Update () {
-		unlocked = lockScript.unlocked;
 
-		if (unlocked) {
+	void Update ()
+    {
+		unlocked = lockScript.unlocked;
+        int randNo = Random.Range(0, 2);
+		if (unlocked)
+        {
 			gameObject.tag = "Untagged";
 			Destroy (playerChecker);
-			int randNo = Random.Range (1, 3);
-			if (randNo == 1) {
-				ptcl.startColor = new Color (0, .2f, .05f, 1);
-			} else {
-				ptcl.startColor = new Color (0, 1, 0, 1);
-			}
-		} else {
-
-			randNo = Random.Range (1, 3);
-			if (randNo == 1) {
-				ptcl.startColor = new Color (0, 0, 1, 1);
-			} else {
-				ptcl.startColor = new Color (0, 1, 1, 1);
-			}
+            ptcl.startColor = randNo == 0 ? new Color(0, 0.2f, 0.05f, 1) : new Color(0, 1, 0, 1);
+		}
+        else
+        {
+            ptcl.startColor = new Color(0, randNo, 1, 1);
 		}
 	}
 
-	void OnEnable(){
-		//Debug.Log ("Enabled");
-		GetComponent<SphereCollider> ().isTrigger = true;
-		GetComponent<AudioSource> ().Stop ();
-		GetComponent<Rigidbody> ().velocity = Vector3.zero;
-		transform.rotation = Quaternion.Euler (0, 0, 0);
-		Angle ();
+	void OnEnable()
+    {
+		GetComponent<SphereCollider>().isTrigger = true;
+		GetComponent<AudioSource>().Stop ();
+		rigidbody.velocity = Vector3.zero;
+		transform.rotation = Quaternion.Euler(0, 0, 0);
+		Angle();
 	}
 	
-	void Angle (){
-		//checking the angle
+	void Angle()
+    {
 		posX = transform.position.x;
 		posZ = transform.position.z;
 		adj = Mathf.Abs (posX - wayPoints[i].position.x);
 		opp = Mathf.Abs (posZ - wayPoints[i].position.z);
 		hyp = Mathf.Sqrt ((adj * adj) + (opp * opp));
-		//print (hyp);
-//		if (hyp < 5f) {
-//			FindNextWayPoint();
-//		}
 		angle = Mathf.Acos (adj / hyp) * (Mathf.Rad2Deg);
-		
-		//checking which quadrant the angle is in
-		if (posX < wayPoints[i].position.x) {
-			if (posZ < wayPoints[i].position.z) {
-				transform.Rotate(0, (90f - angle), 0);
-			} else {
-				transform.Rotate (0, (angle + 90f), 0);
-			}
-		} else {
-			if (posZ < wayPoints[i].position.z) {
-				transform.Rotate (0, angle - 90f, 0);
-				
-			} else {
-				transform.Rotate (0, (-90f - angle), 0);
-			}
-		}
+
+        //checking which quadrant the angle is in
+        float yRot = 0.0f;
+
+		if (posX < wayPoints[i].position.x)
+            yRot = posZ < wayPoints[i].position.z ? 90.0f - angle : angle + 90.0f;
+        else
+            yRot = posZ < wayPoints[i].position.z ? angle - 90.0f : -90.0f - angle;
+
+        transform.Rotate(0.0f, yRot, 0.0f);
 		//applying force
-		GetComponent<Rigidbody>().AddForce (transform.forward.normalized * force);
+		rigidbody.AddForce (transform.forward.normalized * force);
 	}
 	
-	void OnTriggerEnter(Collider target){
-		
+	void OnTriggerEnter(Collider target)
+    {
 		//stopping and readjusting
-		if (target.gameObject.tag == "Waypoint") {
-			GetComponent<Rigidbody>().AddForce(transform.forward.normalized * -force);
+		if (target.gameObject.tag == "Waypoint")
+        {
+			rigidbody.AddForce(transform.forward.normalized * -force);
 			transform.rotation = Quaternion.Euler(0,0,0);
-			
 			FindNextWayPoint();
-
 		}
 	}
 
-	void FindNextWayPoint(){
-		if(looped == false){
-			if((i >= wayPoints.Length - 1)||((backwards == true)&&(i > 0))){
+	void FindNextWayPoint()
+    {
+        if (looped)
+        {
+            if (backwards)
+                i = (i - 1) < 0 ? wayPoints.Length - 1 : i - 1;
+            else
+                i = (i + 1) % wayPoints.Length;
+        }
+		else
+        {
+			if((i >= wayPoints.Length - 1)||((backwards == true) && (i > 0)))
+            {
 				i -= 1;
 				backwards = true;
-			}else if((i <= 0)||((backwards == false)&&(i < wayPoints.Length - 1))){
+			}
+            else if((i <= 0)||((!backwards) && (i < wayPoints.Length - 1)))
+            {
 				i += 1;
 				backwards = false;
-			}
-		}else{
-			if(backwards == false){
-				if(i >= wayPoints.Length - 1){
-					i = 0;
-				}else{
-					i += 1;
-				}
-			}else{
-				if(i <= 0){
-					i = wayPoints.Length - 1;
-				}else{
-					i -= 1;
-				}
 			}
 		}
 		Angle ();

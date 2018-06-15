@@ -2,42 +2,49 @@
 using System.Collections;
 using UnityStandardAssets.Characters.FirstPerson;
 
-public class PlayerDeath : MonoBehaviour {
+public class PlayerDeath : MonoBehaviour
+{
 	private Camera cam;
 	public FirstPersonController script;
 	public bool dead = false;
 	public GameObject deathText;
 	public GameObject timeOutText;
-
 	public GameObject countdown;
 	CountingDownScript countdownScript;
 	bool outOfTime;
 
-	void Start(){
+	void Start()
+    {
 		countdownScript = countdown.GetComponent<CountingDownScript> ();
-
 	}
-	void Update(){
+
+	void Update()
+    {
 		outOfTime = countdownScript.outOfTime;
 
-		if (outOfTime) {
+		if (outOfTime)
+        {
 			Dead();
 			timeOutText.SetActive(true);
 		}
 
-		if((Input.GetKey (KeyCode.R))&&(dead == true)){
+		if(Input.GetKey (KeyCode.R) && dead)
+        {
 			Application.LoadLevel (0);
 		}
 	}
-//	private FirstPersonController playerScript;
-void OnTriggerEnter(Collider other){
-		if (other.gameObject.tag == "Enemy") {
+
+    void OnTriggerEnter(Collider other)
+    {
+		if (other.gameObject.tag == "Enemy")
+        {
 			Dead();
 			deathText.SetActive(true);
 		}
 	}
 
-	void Dead(){
+	void Dead()
+    {
 		script.enabled = false;
 		cam = GetComponentInChildren<Camera>();
 		cam.cullingMask = 0;
