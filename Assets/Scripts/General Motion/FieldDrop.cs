@@ -5,25 +5,25 @@ public class FieldDrop : MonoBehaviour
 {
 	public float count;
 	bool isPlaying;
-	
-	void Update ()
-    {
-		count -= 1 * Time.deltaTime;
-	}
+    private AudioSource audioSource;
 
-	void FixedUpdate()
+    void Start()
     {
-		if (count < 0)
+        audioSource = GetComponent<AudioSource>();
+        StartCoroutine(SlideDown());
+    }
+
+    IEnumerator SlideDown()
+    {
+        yield return new WaitForSeconds(10.0f);
+        audioSource.Play();
+        float lerpTime = 0.0f;
+        while(lerpTime <= 1.0f)
         {
-			Destroy (gameObject, 2);
-
-			if(!isPlaying)
-            {
-				isPlaying = true;
-				GetComponent<AudioSource>().Play();
-			}
-
-			transform.position = new Vector3(transform.position.x, transform.position.y - 0.05f, transform.position.z);
-		}
-	}
+            transform.position = new Vector3(transform.position.x, transform.position.y - 0.05f, transform.position.z);
+            lerpTime += lerpTime * Time.deltaTime;
+            yield return null;
+        }
+        audioSource.Stop();
+    }
 }
