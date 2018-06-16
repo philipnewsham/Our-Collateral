@@ -7,19 +7,24 @@ public class PlayerCheckerScript : MonoBehaviour
 	public bool inAction;
 	public GameObject alien;
 	private Transform alienMove;
-	private Wayfinder_Original_01 wayfinderScript;
-	private FollowPlayer followPlayerScript;
+    private AlienController alienController;
+    public float count;
 
 	void Start()
     {
 		alarmed = false;
 		inAction = false;
-		wayfinderScript = alien.GetComponent<Wayfinder_Original_01>();
-		followPlayerScript = alien.GetComponent<FollowPlayer>();
+		alienController = alien.GetComponent<AlienController>();
         alienMove = alien.GetComponent<Transform>();
+        Invoke("EnableCollider", count);
     }
 
-	void Update()
+    void EnableCollider()
+    {
+        GetComponent<SphereCollider>().enabled = true;
+    }
+
+    void Update()
     {
 		transform.position = new Vector3 (alienMove.position.x, alienMove.position.y, alienMove.position.z);
 	}
@@ -27,18 +32,12 @@ public class PlayerCheckerScript : MonoBehaviour
 	void OnTriggerEnter (Collider other)
     {
 		if (other.gameObject.tag == "Player")
-        {
-			wayfinderScript.enabled = false;
-			followPlayerScript.enabled = true;
-		}
+            alienController.SetEnemyState(AlienController.EnemyState.ALERT);
 	}
 
 	void OnTriggerExit (Collider other)
     {
 		if (other.gameObject.tag == "Player")
-        {
-			followPlayerScript.enabled = false;
-			wayfinderScript.enabled = true;
-		}
+            alienController.SetEnemyState(AlienController.EnemyState.PATROL);
 	}
 }
